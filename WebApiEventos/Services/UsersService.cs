@@ -38,5 +38,27 @@ namespace WebApiEventos.Services
             return user;
         }
 
+        //Permitir a los usuarios marcar eventos como favoritos para poder acceder fácilmente a ellos más tarde. 
+        public async Task AddToFavorites(int userId, int eventId)
+        {
+
+            var user = await dbContext.Users.Include(u => u.Favorites).FirstOrDefaultAsync(u => u.Id == userId);
+            var eventToAdd = await dbContext.Events.FindAsync(eventId);
+
+            if (user != null && eventToAdd != null)
+            {
+                // Verificar si el evento ya existe en la lista de favoritos del usuario
+                bool isAlreadyFavorite = user.Favorites.Any(e => e.Id == eventId);
+
+                if (!isAlreadyFavorite)
+                {
+                    user.Favorites.Add(eventToAdd);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+
+
+        }
+
     }
 }

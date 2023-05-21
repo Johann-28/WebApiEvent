@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiEventos.Entities;
+using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
@@ -10,13 +11,15 @@ namespace WebApiEventos.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly UsersService usersService;
 
         // Inicializa una nueva instancia de la clase UsersController.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersController(ApplicationDbContext dbContext)
+        public UsersController(ApplicationDbContext dbContext, UsersService usersService)
         {
             this.dbContext = dbContext;
+            this.usersService = usersService;
         }
 
         // Obtiene todos los usuarios.
@@ -27,7 +30,7 @@ namespace WebApiEventos.Controllers
         {
             return await dbContext.Users
                 .Include(a => a.Asistants)
-                .Include(a => a.Comments)
+                .Include(a => a.Comments).Include(u => u.Favorites)
                 .ToListAsync();
         }
 
@@ -42,6 +45,13 @@ namespace WebApiEventos.Controllers
             dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync();
 
+            return Ok();
+        }
+
+        [HttpGet("{userId}/favorites/{eventId}")]
+        public async Task<IActionResult> AddToFavorites(int userId, int eventId)
+        {
+            await usersService.AddToFavorites(userId, eventId);
             return Ok();
         }
     }
