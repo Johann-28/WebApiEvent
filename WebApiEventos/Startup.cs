@@ -38,6 +38,8 @@ namespace WebApiEventos
                 
                 );
             services.AddScoped<EventsService>();
+            services.AddScoped<UsersService>();
+            services.AddScoped<CommentsService>();
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
