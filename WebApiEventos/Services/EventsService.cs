@@ -37,7 +37,10 @@ namespace WebApiEventos.Services
 
         public async Task<Events?> GetById(int id)
         {
-            return await dbContext.Events.FindAsync(id);
+            return await dbContext.Events
+        .Include(e => e.Assistants)
+        .Include(e => e.Organizers)
+        .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         // Crea un nuevo evento.

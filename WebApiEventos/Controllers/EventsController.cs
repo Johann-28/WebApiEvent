@@ -13,12 +13,13 @@ namespace WebApiEventos.Controllers
 
         private readonly ApplicationDbContext dbContext;
         private readonly EventsService eventsService;
-        public EventsController(ApplicationDbContext dbContext, EventsService eventsService)
+        private readonly OrganizersService organizersService;
+        public EventsController(ApplicationDbContext dbContext, EventsService eventsService, OrganizersService organizersService)
         {
 
             this.dbContext = dbContext;
             this.eventsService = eventsService;
-
+            this.organizersService = organizersService;
         }
 
         //Regresa todos los registros de la tabla eventos,
@@ -66,6 +67,11 @@ namespace WebApiEventos.Controllers
         public async Task<IActionResult> Create(Events evento)
         {
             // Añade un evento a la base de datos
+
+            var organizer = await organizersService.GetById(evento.OrganizersId);
+
+            if (organizer is null)
+                return BadRequest(new { message = $"El organizador {evento.OrganizersId} no existe" });
 
             await eventsService.Create(evento);
 

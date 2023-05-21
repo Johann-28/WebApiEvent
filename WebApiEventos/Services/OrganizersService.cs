@@ -24,5 +24,10 @@ namespace WebApiEventos.Services
             await dbContext.SaveChangesAsync();
             return organizer;
         }
+
+        public async Task<Organizers?> GetById(int id)
+        {
+            return await dbContext.Organizers.FindAsync(id);
+        }
     }
 }

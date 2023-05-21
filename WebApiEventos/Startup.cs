@@ -33,7 +33,7 @@ namespace WebApiEventos
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen( c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiEventos" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiEvent" });
             }
                 
                 );
