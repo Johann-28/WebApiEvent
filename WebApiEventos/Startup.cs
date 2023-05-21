@@ -1,8 +1,11 @@
+
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using WebApiEventos.Services;
 
 namespace WebApiEventos
+
 {
     public class Startup
     {
@@ -17,6 +20,7 @@ namespace WebApiEventos
 
         public void ConfigureServices(IServiceCollection services)
         {
+
 
             services.AddControllers().AddJsonOptions(x => 
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -33,7 +37,10 @@ namespace WebApiEventos
             }
                 
                 );
- 
+            services.AddScoped<EventsService>();
+
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
