@@ -22,9 +22,10 @@ namespace WebApiEventos.Services
             return await dbContext.Events.Select(a => new EventsDto
             {
                 Name = a.Name,
-                Descripcion = a.Descripcion,
+                Description = a.Descripcion,
                 Date = a.Date,
-                Ubicacion = a.Ubicacion
+                Ubication = a.Ubicacion,
+                Organizer = a.Organizers.Name
             }).ToListAsync();
         }
 

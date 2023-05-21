@@ -4,10 +4,12 @@
     {
         public string Name { get; set; }
 
-        public string Descripcion { get; set; }
+        public string Description { get; set; }
 
         public DateTime Date { get; set; }
 
-        public string Ubicacion { get; set; }
+        public string Ubication { get; set; }
+
+        public string Organizer { get; set; }
     }
 }

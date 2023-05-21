@@ -29,7 +29,7 @@ namespace WebApiEventos.Controllers
 
             //la funcion Include hace un Join en base al identificador propio y la tabla Asistants
             return await dbContext.Events
-                .Include(a => a.Assistants)
+                .Include(a => a.Assistants).Include(a => a.Organizers)
                 .ToListAsync();
         }
 

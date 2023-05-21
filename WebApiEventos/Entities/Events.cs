@@ -13,7 +13,7 @@
 
         public int Capacidad { get; set; }
         public ICollection<Assistants> Assistants { get; set; }
-        public int OrganizerId { get; set; }
+        public int OrganizersId { get; set; }
         public Organizers Organizers { get; set; }
     }
 }
