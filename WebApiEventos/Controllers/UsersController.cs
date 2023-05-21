@@ -12,14 +12,16 @@ namespace WebApiEventos.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly UsersService usersService;
+        private readonly EventsService eventsService;
 
         // Inicializa una nueva instancia de la clase UsersController.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersController(ApplicationDbContext dbContext, UsersService usersService)
+        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService)
         {
             this.dbContext = dbContext;
             this.usersService = usersService;
+            this.eventsService = eventsService;
         }
 
         // Obtiene todos los usuarios.
@@ -51,8 +53,20 @@ namespace WebApiEventos.Controllers
         [HttpGet("{userId}/favorites/{eventId}")]
         public async Task<IActionResult> AddToFavorites(int userId, int eventId)
         {
-            await usersService.AddToFavorites(userId, eventId);
-            return Ok();
+            var isValid = await usersService.IsValid(userId, eventId);
+          
+            
+            if (isValid.Equals("True"))
+            {
+                var user = await usersService.GetById(userId);
+                var evento = await eventsService.GetById(eventId);
+                
+                user.Favorites.Add(evento);
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return BadRequest(isValid);
+          
         }
     }
 }
