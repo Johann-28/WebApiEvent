@@ -14,12 +14,13 @@ namespace WebApiEventos.Controllers
         private readonly ApplicationDbContext dbContext;
         private readonly CommentsService service;
         private readonly UsersService usersService;
-        public CommentsController(ApplicationDbContext dbContext, CommentsService service, UsersService usersService)
+        private readonly OrganizersService organizationizersService;
+        public CommentsController(ApplicationDbContext dbContext, CommentsService service, UsersService usersService, OrganizersService organizationizersService)
         {
             this.dbContext = dbContext;
             this.service = service;
             this.usersService = usersService;
-
+            this.organizationizersService = organizationizersService;
         }
 
         [HttpGet("get")]
@@ -32,7 +33,7 @@ namespace WebApiEventos.Controllers
         [HttpGet("getall")]
         public async Task<List<Comments>> GetAll()
         {
-            return await dbContext.Comments.Include(a => a.User).ToListAsync();
+            return await dbContext.Comments.Include(a=> a.User).Include(a=> a.Organizers).ToListAsync();
         }
 
         // Permite a los usuarios enviar preguntas o comentarios al organizador del evento.
@@ -50,6 +51,13 @@ namespace WebApiEventos.Controllers
             {
                 return BadRequest(new { message = "User doesnt exists" });
             }
+
+            var organizer = await organizationizersService.GetById(comentario.OrgnaizerId);
+            if(organizer is null)
+            {
+                return BadRequest(new { message = $"Organizer {comentario.OrgnaizerId} doesnt exists" });
+            }
+
 
             // Agrega el comentario a la base de datos.
             dbContext.Comments.Add(comentario);

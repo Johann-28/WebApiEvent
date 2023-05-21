@@ -29,5 +29,12 @@ namespace WebApiEventos.Services
         {
             return await dbContext.Organizers.FindAsync(id);
         }
+
+        public async Task<String> GetNameById(int id)
+        {
+            var organizator = await GetById(id);
+
+            return organizator.Name;
+        }
     }
 }
