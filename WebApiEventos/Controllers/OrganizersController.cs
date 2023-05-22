@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
 
@@ -27,6 +28,20 @@ namespace WebApiEventos.Controllers
         public async Task<IActionResult> Create(Organizers organizer)
         {
             await service.Create(organizer);
+            return Ok();
+
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(OrganizerAccounts accountToRegister)
+        {
+            bool actuallyRegistered = await dbContext.OrganizersAccounts.AnyAsync(x => x.Email == accountToRegister.Email);
+
+            if (actuallyRegistered)
+            {
+                return BadRequest(new { message = "Email already registered" });
+            }
+            await service.Register(accountToRegister);
             return Ok();
 
         }

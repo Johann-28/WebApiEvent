@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 
 namespace WebApiEventos.Services
@@ -35,6 +36,22 @@ namespace WebApiEventos.Services
             var organizator = await GetById(id);
 
             return organizator.Name;
+        }
+
+        public async Task<OrganizerAccounts> Register(OrganizerAccounts organizer)
+        {
+            Organizers newAccount = new Organizers();
+            newAccount.Name = organizer.Name;
+
+          
+
+            await Create(newAccount);
+
+            dbContext.OrganizersAccounts.Add(organizer);
+            await dbContext.SaveChangesAsync();
+            return organizer;
+
+
         }
     }
 }
