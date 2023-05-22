@@ -42,18 +42,39 @@ namespace WebApiEventos.Controllers
             return await eventsService.GetTop();
         }
 
-      
-        //Regresa el evento con la id solicitada
-        [HttpGet("get/{id}")]
-        public async Task<ActionResult<Events>> GetById(int id)
+
+        //Recibe un objeto con la fecha, nombre y ubicacion y se filtran
+        [HttpPost("search")]
+        public async Task<IActionResult> Search(EventSearchDtoIn searchBy)
         {
-            var evento = await eventsService.GetById(id);
+            var events = dbContext.Events.AsQueryable();
+           
+            // Filtrar por nombre del evento
+            if (!string.IsNullOrEmpty(searchBy.EventName))
+            {
+                
+                events = events.Where(e => e.Name.Contains(searchBy.EventName));
+            }
 
-            if (evento is null)
-                return BadRequest("El evento no existe");
-            return evento;
+            //Filtrar por ubicación del evento
+            if (!string.IsNullOrEmpty(searchBy.Ubication))
+            {
+                
+                events = events.Where(e => e.Ubicacion.Contains(searchBy.Ubication));
+            }
 
+            // Filtrar por fecha del evento
+            if (searchBy.Date != null)
+            {
+                
+                events = events.Where(e => e.Date.Date == searchBy.Date.Value.Date);
+            }
+
+            var result = await events.ToListAsync();
+            return Ok(result);
+        
         }
+
 
         // Crea un nuevo evento.
         // Permite a los usuarios crear un evento especificando el nombre, descripción, fecha, hora, ubicación y capacidad máxima de asistentes.
