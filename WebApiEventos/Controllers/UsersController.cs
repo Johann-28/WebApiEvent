@@ -185,11 +185,11 @@ namespace WebApiEventos.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(AccountDto organizerDto)
+        public async Task<IActionResult> Login(AccountDto userDto)
         {
-            var organizer = await loginService.GetUser(organizerDto);
+            var user = await loginService.GetUser(userDto);
 
-            if (organizer is null)
+            if (user is null)
             {
                 return BadRequest(new { message = "Invalid Credentials" });
             }
