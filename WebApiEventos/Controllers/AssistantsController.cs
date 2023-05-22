@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
@@ -59,7 +60,7 @@ namespace WebApiEventos.Controllers
         // Retorna:
         //   - Un objeto IActionResult que indica el resultado de la operación.
         [HttpPost("register")]
-        public async Task<IActionResult> Register(int userId, int eventId)
+        public async Task<IActionResult> Register([FromQuery, Required()] int userId, [FromQuery, Required()] int eventId)
         {
             string result = await assistantsService.Validate(userId, eventId);
             if (result != "Valid")
