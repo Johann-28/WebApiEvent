@@ -9,6 +9,7 @@
         public ICollection<Assistants> Asistants { get; set; }
         public ICollection<Comments> Comments { get; set; }
         public ICollection<Events> Favorites { get; set; }
+        public ICollection<Organizers> Organizations { get; set; }
 
     }
 }

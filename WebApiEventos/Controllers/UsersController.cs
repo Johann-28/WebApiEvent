@@ -13,15 +13,17 @@ namespace WebApiEventos.Controllers
         private readonly ApplicationDbContext dbContext;
         private readonly UsersService usersService;
         private readonly EventsService eventsService;
+        private readonly OrganizersService organizersService;
 
         // Inicializa una nueva instancia de la clase UsersController.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService)
+        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService, OrganizersService organizersService)
         {
             this.dbContext = dbContext;
             this.usersService = usersService;
             this.eventsService = eventsService;
+            this.organizersService = organizersService;
         }
 
         // Obtiene todos los usuarios.
@@ -32,7 +34,7 @@ namespace WebApiEventos.Controllers
         {
             return await dbContext.Users
                 .Include(a => a.Asistants)
-                .Include(a => a.Comments).Include(u => u.Favorites)
+                .Include(a => a.Comments).Include(u => u.Favorites).Include(a => a.Organizations)
                 .ToListAsync();
         }
 
@@ -67,6 +69,25 @@ namespace WebApiEventos.Controllers
             }
             return BadRequest(isValid);
           
+        }
+
+        [HttpGet("{userId}/follow/{organizatorId}")]
+        public async Task<IActionResult> FollowOrganizator(int userId, int organizatorId)
+        {
+            var isValid = await usersService.OrganizerValid(userId, organizatorId);
+
+
+            if (isValid.Equals("True"))
+            {
+                var user = await usersService.GetById(userId);
+                var organizer = await organizersService.GetById(organizatorId);
+          
+                user.Organizations.Add(organizer);
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            return BadRequest(isValid);
+
         }
     }
 }

@@ -7,13 +7,15 @@ namespace WebApiEventos.Services
     public class UsersService
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly OrganizersService organizersService;
 
         // Inicializa una nueva instancia de la clase UsersService.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersService(ApplicationDbContext dbContext)
+        public UsersService(ApplicationDbContext dbContext, OrganizersService organizersService)
         {
             this.dbContext = dbContext;
+            this.organizersService = organizersService;
         }
 
         // Obtiene un usuario por su ID.
@@ -64,7 +66,32 @@ namespace WebApiEventos.Services
             return isValid = "Event Already Favorite";
         }
 
+        public async Task<String> OrganizerValid(int userId, int organizerId)
+        {
+            string isValid = "True";
 
+            var user = await dbContext.Users.Include(u => u.Organizations).FirstOrDefaultAsync(u => u.Id == userId);
+            var organizer = await organizersService.GetById(organizerId);
+
+            if (user is null)
+            {
+                return isValid = "User doesnt exists";
+            }
+
+            if (organizer is null)
+            {
+                return isValid = "Organizer doesnts exists";
+            }
+            // Verificar si el evento ya existe en la lista de favoritos del usuario
+    
+            bool isAlreadyFollowing = user.Organizations.Any(e => e.Id == organizerId);
+
+            if (!isAlreadyFollowing)
+            {
+                return isValid;
+            }
+            return isValid = "Organizator already Followed";
+        }
 
     }
 }
