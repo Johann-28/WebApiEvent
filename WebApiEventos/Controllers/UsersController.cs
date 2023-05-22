@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,6 +15,7 @@ namespace WebApiEventos.Controllers
     // Controlador para gestionar las operaciones relacionadas con los usuarios.
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
@@ -84,6 +86,7 @@ namespace WebApiEventos.Controllers
         // Obtiene todos los usuarios.
         // Retorna:
         //   - Una lista de objetos Users que representan todos los usuarios registrados.
+        [Authorize(Policy ="User")]
         [HttpGet("get")]
         public async Task<ActionResult<List<Users>>> GetAll()
         {
@@ -127,30 +130,7 @@ namespace WebApiEventos.Controllers
                 .ToListAsync();
         }
 
-        // Crea un nuevo usuario.
-        // Parámetros:
-        //   - user: Objeto que contiene los detalles del usuario a crear.
-        // Retorna:
-        //   - Respuesta HTTP indicando si se creó el usuario exitosamente.
-        [HttpPost("register")]
-        public async Task<IActionResult> Create(Accounts account)
-        {
-            Users user = new Users();
-            user.Name = account.Name;
-            user.Email = account.Email;
-            user.Password = account.Password;
-
-            bool userRegistered = await dbContext.Users.AnyAsync( x => x.Email == account.Email);
-            if (userRegistered)
-            {
-                return BadRequest(new { message = "User already registered" });
-            }
-
-            dbContext.Users.Add(user);
-            await dbContext.SaveChangesAsync();
-
-            return Ok();
-        }
+       
 
         [HttpGet("{userId}/favorites/{eventId}")]
         public async Task<IActionResult> AddToFavorites(int userId, int eventId)
@@ -190,39 +170,7 @@ namespace WebApiEventos.Controllers
 
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(AccountDto userDto)
-        {
-            var user = await loginService.GetUser(userDto);
 
-            if (user is null)
-            {
-                return BadRequest(new { message = "Invalid Credentials" });
-            }
-
-            string jwtToken = GenerateToken(user);
-
-            return Ok(new { token = jwtToken });
-        }
-
-        private string GenerateToken(Users user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim (ClaimTypes.Email, user.Email)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var securityToken = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
-                signingCredentials: creds);
-
-            string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
-            return token;
-        }
+       
     }
 }
