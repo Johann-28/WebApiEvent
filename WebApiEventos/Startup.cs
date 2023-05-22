@@ -66,11 +66,15 @@ namespace WebApiEventos
                         ValidateAudience = false
                     };
                 });
-
             services.AddAuthorization(options =>
-              options.AddPolicy("User", policy => policy.RequireClaim("Email"))
-          );
+              options.AddPolicy("UserPolicy", policy =>
+              {
 
+                  policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                  policy.RequireAuthenticatedUser();
+
+              })
+         );
 
             // Configuración para la autenticación de organizadores
             services.AddAuthentication("OrganizerScheme").AddJwtBearer("OrganizerScheme", options =>
@@ -84,15 +88,14 @@ namespace WebApiEventos
                 };
             });
 
+
             services.AddAuthorization(options =>
-                 options.AddPolicy("OrganizerPolicy", policy =>
-                 {
+              options.AddPolicy("OrganizerPolicy", policy => policy.RequireClaim("Email"))
+          );
 
-                     policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-                     policy.RequireAuthenticatedUser();
 
-                 })
-            );
+
+         
 
 
 

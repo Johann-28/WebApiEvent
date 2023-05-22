@@ -7,9 +7,9 @@ using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
-    [Authorize]
+   
     [ApiController]
-    [Route("api/[controller]")]
+    [Authorize(Policy = "OrganizerPolicy")]
     public class OrganizersController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;

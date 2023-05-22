@@ -15,7 +15,7 @@ namespace WebApiEventos.Controllers
     // Controlador para gestionar las operaciones relacionadas con los usuarios.
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Policy = "OrganizerPolicy")]
+    [Authorize(Policy = "UserPolicy")]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
