@@ -33,7 +33,7 @@ namespace WebApiEventos.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(OrganizerAccounts accountToRegister)
+        public async Task<IActionResult> Register(Accounts accountToRegister)
         {
             bool actuallyRegistered = await dbContext.OrganizersAccounts.AnyAsync(x => x.Email == accountToRegister.Email);
 

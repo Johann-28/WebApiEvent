@@ -124,9 +124,20 @@ namespace WebApiEventos.Controllers
         //   - user: Objeto que contiene los detalles del usuario a crear.
         // Retorna:
         //   - Respuesta HTTP indicando si se creó el usuario exitosamente.
-        [HttpPost("post")]
-        public async Task<IActionResult> Create(Users user)
+        [HttpPost("register")]
+        public async Task<IActionResult> Create(Accounts account)
         {
+            Users user = new Users();
+            user.Name = account.Name;
+            user.Email = account.Email;
+            user.Password = account.Password;
+
+            bool userRegistered = await dbContext.Users.AnyAsync( x => x.Email == account.Email);
+            if (userRegistered)
+            {
+                return BadRequest(new { message = "User already registered" });
+            }
+
             dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync();
 

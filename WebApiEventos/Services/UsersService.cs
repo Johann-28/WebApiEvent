@@ -28,17 +28,7 @@ namespace WebApiEventos.Services
             return await dbContext.Users.FindAsync(id);
         }
 
-        // Crea un nuevo usuario.
-        // Parámetros:
-        //   - user: Objeto que contiene los detalles del usuario a crear.
-        // Retorna:
-        //   - El objeto Users que representa al usuario creado.
-        public async Task<Users> Create(Users user)
-        {
-            dbContext.Users.Add(user);
-            await dbContext.SaveChangesAsync();
-            return user;
-        }
+    
 
         public async Task<String> IsValid(int userId, int eventId)
         {

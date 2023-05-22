@@ -38,7 +38,7 @@ namespace WebApiEventos.Services
             return organizator.Name;
         }
 
-        public async Task<OrganizerAccounts> Register(OrganizerAccounts organizer)
+        public async Task<Accounts> Register(Accounts organizer)
         {
             Organizers newAccount = new Organizers();
             newAccount.Name = organizer.Name;

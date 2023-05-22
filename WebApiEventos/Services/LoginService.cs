@@ -13,7 +13,7 @@ namespace WebApiEventos.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<OrganizerAccounts?> GetOrganizator(OrganizerAccountDto organizer)
+        public async Task<Accounts?> GetOrganizator(OrganizerAccountDto organizer)
         {
             return await dbContext.OrganizersAccounts
                 .SingleOrDefaultAsync(x => x.Email == organizer.Email && x.Password == organizer.Password);
