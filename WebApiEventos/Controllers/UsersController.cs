@@ -16,16 +16,18 @@ namespace WebApiEventos.Controllers
         private readonly UsersService usersService;
         private readonly EventsService eventsService;
         private readonly OrganizersService organizersService;
+        private readonly LoginService loginService;
 
         // Inicializa una nueva instancia de la clase UsersController.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService, OrganizersService organizersService)
+        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService, OrganizersService organizersService, LoginService loginService)
         {
             this.dbContext = dbContext;
             this.usersService = usersService;
             this.eventsService = eventsService;
             this.organizersService = organizersService;
+            this.loginService = loginService;
         }
 
         [HttpGet("getdto")]
@@ -180,6 +182,19 @@ namespace WebApiEventos.Controllers
             }
             return BadRequest(isValid);
 
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(AccountDto organizerDto)
+        {
+            var organizer = await loginService.GetUser(organizerDto);
+
+            if (organizer is null)
+            {
+                return BadRequest(new { message = "Invalid Credentials" });
+            }
+            //generar token
+            return Ok(new { token = "some value" });
         }
     }
 }

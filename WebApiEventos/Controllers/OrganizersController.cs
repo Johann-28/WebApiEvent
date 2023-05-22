@@ -24,13 +24,15 @@ namespace WebApiEventos.Controllers
             return await service.Get();
         }
 
+        //Este metodo es el registro pero feo
+        /* 
         [HttpPost("post")]
         public async Task<IActionResult> Create(Organizers organizer)
         {
             await service.Create(organizer);
             return Ok();
 
-        }
+        }*/
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(Accounts accountToRegister)
