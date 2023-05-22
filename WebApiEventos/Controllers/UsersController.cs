@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebApiEventos.DTOs;
 using WebApiEventos.DTOs.UserDto;
 using WebApiEventos.Entities;
@@ -17,17 +21,19 @@ namespace WebApiEventos.Controllers
         private readonly EventsService eventsService;
         private readonly OrganizersService organizersService;
         private readonly LoginService loginService;
+        private IConfiguration config;
 
         // Inicializa una nueva instancia de la clase UsersController.
         // Parámetros:
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService, OrganizersService organizersService, LoginService loginService)
+        public UsersController(ApplicationDbContext dbContext, UsersService usersService, EventsService eventsService, OrganizersService organizersService, LoginService loginService, IConfiguration config)
         {
             this.dbContext = dbContext;
             this.usersService = usersService;
             this.eventsService = eventsService;
             this.organizersService = organizersService;
             this.loginService = loginService;
+            this.config = config;
         }
 
         [HttpGet("getdto")]
@@ -193,8 +199,30 @@ namespace WebApiEventos.Controllers
             {
                 return BadRequest(new { message = "Invalid Credentials" });
             }
-            //generar token
-            return Ok(new { token = "some value" });
+
+            string jwtToken = GenerateToken(user);
+
+            return Ok(new { token = jwtToken });
+        }
+
+        private string GenerateToken(Users user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim (ClaimTypes.Email, user.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var securityToken = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: creds);
+
+            string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            return token;
         }
     }
 }
