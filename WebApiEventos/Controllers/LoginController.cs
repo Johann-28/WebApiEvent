@@ -27,7 +27,7 @@ namespace WebApiEventos.Controllers
         }
 
         [HttpPost("login/user")]
-        public async Task<IActionResult> Login(AccountDto userDto)
+        public async Task<IActionResult> LoginUser(AccountDto userDto)
         {
             var user = await loginService.GetUser(userDto);
 
@@ -72,10 +72,50 @@ namespace WebApiEventos.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim (ClaimTypes.Email, user.Email),
-                new Claim("Email", user.Email)
+                new Claim("Email", user.Email),
+                new Claim("UserId", user.Id.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var securityToken = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: creds);
+
+            string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            return token;
+        }
+
+
+        [HttpPost("login/organizer")]
+        public async Task<IActionResult> LoginOrganizer(AccountDto userDto)
+        {
+            var organizer = await loginService.GetOrganizator(userDto);
+
+            if (organizer is null)
+            {
+                return BadRequest(new { message = "Invalid Credentials" });
+            }
+
+            string jwtToken = GenerateOrganizerToken(organizer);
+
+            return Ok(new { token = jwtToken });
+        }
+
+
+        private string GenerateOrganizerToken(Accounts organizer)
+        {
+            var claims = new[]
+                 {
+                new Claim(ClaimTypes.Name, organizer.Name),
+                new Claim (ClaimTypes.Email, organizer.Email),
+                new Claim("Email", organizer.Email),
+                new Claim("UserId", organizer.Id.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:OrganizerKey").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var securityToken = new JwtSecurityToken(

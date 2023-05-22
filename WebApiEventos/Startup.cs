@@ -1,7 +1,9 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -28,7 +30,7 @@ namespace WebApiEventos
         {
 
 
-            services.AddControllers().AddJsonOptions(x => 
+            services.AddControllers().AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             services.AddDbContext<ApplicationDbContext>(
@@ -37,11 +39,11 @@ namespace WebApiEventos
                 );
 
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen( c =>
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WebApiEvent" });
             }
-                
+
                 );
             services.AddScoped<EventsService>();
             services.AddScoped<UsersService>();
@@ -52,6 +54,7 @@ namespace WebApiEventos
 
             services.AddEndpointsApiExplorer();
 
+            // Configuración para la autenticación de usuarios
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -64,9 +67,38 @@ namespace WebApiEventos
                     };
                 });
 
-            services.AddAuthorization(options => 
-                options.AddPolicy("User", policy => policy.RequireClaim("Email"))
+            services.AddAuthorization(options =>
+              options.AddPolicy("User", policy => policy.RequireClaim("Email"))
+          );
+
+
+            // Configuración para la autenticación de organizadores
+            services.AddAuthentication("OrganizerScheme").AddJwtBearer("OrganizerScheme", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:OrganizerKey"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            services.AddAuthorization(options =>
+                 options.AddPolicy("OrganizerPolicy", policy =>
+                 {
+
+                     policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                     policy.RequireAuthenticatedUser();
+
+                 })
             );
+
+
+
+          
+
+            
 
             services.AddSwaggerGen(options =>
             {

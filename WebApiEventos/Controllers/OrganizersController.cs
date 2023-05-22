@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
@@ -6,6 +7,7 @@ using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OrganizersController : ControllerBase

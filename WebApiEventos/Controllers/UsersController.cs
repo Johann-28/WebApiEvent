@@ -15,7 +15,7 @@ namespace WebApiEventos.Controllers
     // Controlador para gestionar las operaciones relacionadas con los usuarios.
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Policy = "OrganizerPolicy")]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
@@ -132,9 +132,13 @@ namespace WebApiEventos.Controllers
 
        
 
-        [HttpGet("{userId}/favorites/{eventId}")]
-        public async Task<IActionResult> AddToFavorites(int userId, int eventId)
+        [HttpGet("favorites/{eventId}")]
+        public async Task<IActionResult> AddToFavorites( int eventId)
         {
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
             var isValid = await usersService.IsValid(userId, eventId);
           
             
@@ -151,9 +155,14 @@ namespace WebApiEventos.Controllers
           
         }
 
-        [HttpGet("{userId}/follow/{organizatorId}")]
-        public async Task<IActionResult> FollowOrganizator(int userId, int organizatorId)
+        [HttpGet("follow/{organizatorId}")]
+        public async Task<IActionResult> FollowOrganizator(int organizatorId)
         {
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
+            //Determinando si los datos son correctos
             var isValid = await usersService.OrganizerValid(userId, organizatorId);
 
 
@@ -164,13 +173,37 @@ namespace WebApiEventos.Controllers
           
                 user.Organizations.Add(organizer);
                 await dbContext.SaveChangesAsync();
-                return Ok();
+                return Ok(new { message = "followed successfully" });
             }
             return BadRequest(isValid);
 
         }
 
+        //Este metdo lo deje aqui comentado como demostracion de como es que accedo al id del usuario regisrado con solo su token
+        /*
+        [HttpGet("whoIam")]
+        public  IActionResult WhatIsYourId()
+        {
+            var emailClaim = HttpContext.User.FindFirst("Email");
+            
+            if (emailClaim == null)
+            {
+                // El token no contiene la claim "UserId" o el usuario no está autenticado
+                return Unauthorized();
+            }
 
+            var userIdClaim = HttpContext.User.FindFirst("UserId");
+            if (userIdClaim == null)
+            {
+                // El token no contiene la claim "UserId" o el usuario no está autenticado
+                return Unauthorized();
+            }
+
+            int id = int.Parse(userIdClaim.Value);
+            string email = emailClaim.Value;
+
+            return Ok(new {message = $"Su id es: {email} y su id es :{id}"});
+        }*/
        
     }
 }
