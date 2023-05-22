@@ -24,27 +24,25 @@ namespace WebApiEventos.Controllers
 
         //Regresa todos los registros de la tabla eventos,
         //NECESITARAS AUTORIZACION
-        [HttpGet("getall")]
-        public async Task<ActionResult<List<Events>>> GetAll()
+        [HttpGet("events")]
+        public async Task<IEnumerable<EventsDto>> GetAll()
         {
 
             //la funcion Include hace un Join en base al identificador propio y la tabla Asistants
-            return await dbContext.Events
-                .Include(a => a.Assistants).Include(a => a.Organizers)
-                .ToListAsync();
+            return await eventsService.Get();
         }
 
         // Obtiene una lista de eventos en formato DTO (Data Transfer Object).
         // Permite mostrar una lista de todos los eventos creados, proporcionando información básica como el nombre, fecha y ubicación.
         // Esto permite a los usuarios explorar los eventos y decidir a cuál desean asistir.
 
-        [HttpGet("getdto")]
-        public async Task<IEnumerable<EventsDto>> GetDTOs()
+        [HttpGet("trending")]
+        public async Task<IEnumerable<EventsDto>> Trending()
         {
-            return await eventsService.Get();
+            return await eventsService.GetTop();
         }
 
-
+      
         //Regresa el evento con la id solicitada
         [HttpGet("get/{id}")]
         public async Task<ActionResult<Events>> GetById(int id)

@@ -11,5 +11,6 @@
         public string Ubication { get; set; }
 
         public string Organizer { get; set; }
+        public int Capacity { get; set; }
     }
 }

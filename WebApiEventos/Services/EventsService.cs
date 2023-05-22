@@ -16,18 +16,45 @@ namespace WebApiEventos.Services
         // Obtiene una lista de eventos en formato DTO.
         // Retorna:
         // - Una colección de objetos EventsDto que representan los eventos en formato DTO.
+        //La regresa ordenada de mayor a menor
 
+        public async Task<IEnumerable<EventsDto>> GetTop()
+        {
+            var events = await dbContext.Events
+                .Include(a => a.Organizers)
+                .Select(a => new EventsDto
+                {
+                    Name = a.Name,
+                    Description = a.Descripcion,
+                    Date = a.Date,
+                    Ubication = a.Ubicacion,
+                    Organizer = a.Organizers.Name,
+                    Capacity = a.Capacidad 
+                })
+                .OrderByDescending(a => a.Capacity)
+                .Take(5)
+                .ToListAsync();
+
+            return events;
+        }
         public async Task<IEnumerable<EventsDto>> Get()
         {
-            return await dbContext.Events.Select(a => new EventsDto
-            {
-                Name = a.Name,
-                Description = a.Descripcion,
-                Date = a.Date,
-                Ubication = a.Ubicacion,
-                Organizer = a.Organizers.Name
-            }).ToListAsync();
+            var events = await dbContext.Events
+                .Include(a => a.Organizers)
+                .Select(a => new EventsDto
+                {
+                    Name = a.Name,
+                    Description = a.Descripcion,
+                    Date = a.Date,
+                    Ubication = a.Ubicacion,
+                    Organizer = a.Organizers.Name,
+                    Capacity = a.Capacidad
+                })
+                .ToListAsync();
+
+            return events;
         }
+
 
         // Obtiene un evento por su ID.
         // Parámetros:
