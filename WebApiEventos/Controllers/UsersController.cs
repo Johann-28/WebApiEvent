@@ -34,7 +34,41 @@ namespace WebApiEventos.Controllers
         {
             return await dbContext.Users
                 .Include(a => a.Asistants)
-                .Include(a => a.Comments).Include(u => u.Favorites).Include(a => a.Organizations)
+                .Include(a => a.Comments)
+                .Include(u => u.Favorites)
+                .Include(a => a.Organizations)
+                .Select(u => new Users
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    Password = u.Password,
+                    Asistants = u.Asistants.Select(a => new Assistants
+                    {
+                        Id=a.Id,
+                        EventId =a.EventId,
+                        Event = new Events
+                        {
+                            Id = a.EventId,
+                            Name = a.Event.Name,
+                            Date = a.Event.Date,
+                            Ubicacion = a.Event.Ubicacion,
+                        }
+                    }).ToList(),
+                    Favorites = u.Favorites,
+                    Organizations = u.Organizations.Select(o => new Organizers 
+                    {
+                        Id = o.Id, 
+                        Name = o.Name 
+                    }).ToList(),
+                    Comments = u.Comments.Select(c=> new Comments
+                    {
+                        Id = c.Id,
+                        Comment = c.Comment,
+                        Type = c.Type
+   
+                    }).ToList()
+                })
                 .ToListAsync();
         }
 
