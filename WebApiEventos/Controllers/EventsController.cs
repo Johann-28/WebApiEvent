@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
 using WebApiEventos.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using System.Net.Mail;
-using System.Net;
+
 
 namespace WebApiEventos.Controllers
 {

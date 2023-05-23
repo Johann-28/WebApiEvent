@@ -6,19 +6,19 @@ namespace WebApiEventos.Entities
     public class Users
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "El campo Name es requerido")]
-        [MaxLength(50, ErrorMessage = "La longitud máxima del campo Name es de 50 caracteres")]
+
+        [Required(ErrorMessage = "Name field required")]
+        [MaxLength(50, ErrorMessage = "The maximum length of the Name field is 50 characters.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "El campo Email es requerido")]
-        [MaxLength(100, ErrorMessage = "La longitud máxima del campo Email es de 100 caracteres")]
-        [EmailAddress(ErrorMessage = "El campo Email no tiene un formato de correo electrónico válido")]
-
+        [Required(ErrorMessage = "Email Field Required")]
+        [MaxLength(100, ErrorMessage = "The maximum length of the Email field is 100 characters")]
+        [EmailAddress(ErrorMessage = "The Email field does not have a valid email format")]
 
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "El campo Password es requerido")]
-        [MaxLength(20, ErrorMessage = "La longitud máxima del campo Password es de 20 caracteres")]
+        [Required(ErrorMessage = "Password field required")]
+        [MaxLength(20, ErrorMessage = "The maximum length of the Password field is 20 characters.")]
 
         public string Password { get; set; }
 

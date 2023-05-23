@@ -5,18 +5,18 @@ namespace WebApiEventos.Entities
 {
     public class Events
     {
-        [Required]
+        
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name field required")]
         public string Name { get; set; }
         [Required]
-        [MaxLength(140)]
+        [MaxLength(100, ErrorMessage = "The maximum length of the Description field is 100 characters")]
         public string Descripcion { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Date field required")]
         public DateTime Date { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Ubication field required")]
         public string Ubicacion { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Capacity field required")]
         public int Capacidad { get; set; }
 
         [JsonIgnore]
