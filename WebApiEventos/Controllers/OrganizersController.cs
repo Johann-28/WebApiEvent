@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
@@ -12,13 +11,13 @@ namespace WebApiEventos.Controllers
     [Authorize(Policy = "OrganizerPolicy")]
     public class OrganizersController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
+     
         private readonly OrganizersService service;
         private readonly CommentsService commentsService;
 
-        public OrganizersController(ApplicationDbContext dbContext, OrganizersService service, CommentsService commentsService)
+        public OrganizersController( OrganizersService service, CommentsService commentsService)
         {
-            this.dbContext = dbContext;
+ 
             this.service = service;
             this.commentsService = commentsService;
           
