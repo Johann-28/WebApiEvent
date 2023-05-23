@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,23 +9,30 @@ using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
+    // Controlador para gestionar las operaciones relacionadas con los logeos.
     [ApiController]
     [Route("api/[controller]")]
     public class LoginController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
+      
         private readonly LoginService loginService;
         private readonly OrganizersService organizersService;
-        private IConfiguration config;
-        public LoginController(ApplicationDbContext dbContext, LoginService loginService, IConfiguration config, OrganizersService organizersService)
+        private readonly UsersService usersService;
+        private readonly IConfiguration config;
+        public LoginController( LoginService loginService, IConfiguration config, OrganizersService organizersService, UsersService usersService)
         {
 
-            this.dbContext = dbContext;
             this.loginService = loginService;
             this.config = config;
             this.organizersService = organizersService;
+            this.usersService = usersService;
         }
 
+        // Inicia sesión para un usuario.
+        // Parámetros:
+        //   - userDto: Objeto AccountDto que contiene las credenciales del usuario.
+        // Retorna:
+        //   - Respuesta HTTP indicando si el inicio de sesión fue exitoso junto con el token JWT.
         [HttpPost("login/user")]
         public async Task<IActionResult> LoginUser(AccountDto userDto)
         {
@@ -55,18 +61,22 @@ namespace WebApiEventos.Controllers
             user.Email = account.Email;
             user.Password = account.Password;
 
-            bool userRegistered = await dbContext.Users.AnyAsync(x => x.Email == account.Email);
+            bool userRegistered = await loginService.UserRegistered(account);
             if (userRegistered)
             {
                 return BadRequest(new { message = "User already registered" });
             }
 
-            dbContext.Users.Add(user);
-            await dbContext.SaveChangesAsync();
+            await usersService.Register(user);
 
             return Ok();
         }
 
+        // Genera un token JWT para un usuario.
+        // Parámetros:
+        //   - user: Objeto Users que representa al usuario para el cual se generará el token.
+        // Retorna:
+        //   - El token JWT generado como una cadena de caracteres.
         private string GenerateToken(Users user)
         {
             var claims = new[]
@@ -89,7 +99,11 @@ namespace WebApiEventos.Controllers
             return token;
         }
 
-
+        // Inicia sesión para un organizador.
+        // Parámetros:
+        //   - userDto: Objeto AccountDto que contiene las credenciales del organizador.
+        // Retorna:
+        //   - Respuesta HTTP indicando si el inicio de sesión fue exitoso junto con el token JWT.
         [HttpPost("login/organizer")]
         public async Task<IActionResult> LoginOrganizer(AccountDto userDto)
         {
@@ -104,10 +118,16 @@ namespace WebApiEventos.Controllers
 
             return Ok(new { token = jwtToken });
         }
+
+        // Crea un nuevo organizador.
+        // Parámetros:
+        //   - accountToRegister: Objeto Accounts que contiene los detalles del organizador a crear.
+        // Retorna:
+        //   - Respuesta HTTP indicando si se creó el organizador exitosamente.
         [HttpPost("register/organizer")]
         public async Task<IActionResult> Register(Accounts accountToRegister)
         {
-            bool actuallyRegistered = await dbContext.OrganizersAccounts.AnyAsync(x => x.Email == accountToRegister.Email);
+            bool actuallyRegistered = await loginService.OrganizerRegistered(accountToRegister);
 
             if (actuallyRegistered)
             {
@@ -119,7 +139,11 @@ namespace WebApiEventos.Controllers
         }
 
 
-
+        // Genera un token JWT para un organizador.
+        // Parámetros:
+        //   - organizer: Objeto Accounts que representa al organizador para el cual se generará el token.
+        // Retorna:
+        //   - El token JWT generado como una cadena de caracteres.
         private string GenerateOrganizerToken(Accounts organizer)
         {
             var claims = new[]

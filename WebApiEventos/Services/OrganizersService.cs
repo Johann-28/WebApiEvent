@@ -47,10 +47,7 @@ namespace WebApiEventos.Services
         // Registra una nueva cuenta de organizador.
         // Parámetros:
         //   - organizer: Objeto Accounts que representa la nueva cuenta de organizador a registrar.
-        // Retorna:
-        //   - El objeto Accounts recién registrado.
-
-        public async Task<Accounts> Register(Accounts organizer)
+        public async Task Register(Accounts organizer)
         {
             Organizers newAccount = new Organizers();
             newAccount.Name = organizer.Name;
@@ -61,7 +58,7 @@ namespace WebApiEventos.Services
 
             dbContext.OrganizersAccounts.Add(organizer);
             await dbContext.SaveChangesAsync();
-            return organizer;
+           
 
 
         }

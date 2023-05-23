@@ -32,8 +32,17 @@ namespace WebApiEventos.Services
             return await dbContext.Users.FindAsync(id);
         }
 
-        //   - Lista de eventos próximos en formato DTO (Data Transfer Object).
+        // Registra una nueva cuenta de usuario.
+        // Parámetros:
+        //   - user: Objeto Users que representa el nuevo usuario a registrar.
+        public async Task Register(Users user)
+        {
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
 
+        }
+
+        //   - Lista de eventos próximos en formato DTO (Data Transfer Object).
         public async Task<ActionResult<List<EventsDto>>> UpComing(int userId)
         {
 
