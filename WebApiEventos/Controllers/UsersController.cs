@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using WebApiEventos.DTOs;
 using WebApiEventos.DTOs.UserDto;
 using WebApiEventos.Entities;
@@ -213,6 +214,47 @@ namespace WebApiEventos.Controllers
 
         }
 
+        [HttpGet("coupons")]
+        public async Task<IEnumerable<CouponsDto>> Coupons()
+        {
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
+            // Obtener el usuario actual
+            var usuario = await dbContext.Users
+                .Include(u => u.Asistants)
+                .Include(u => u.Favorites)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (usuario == null)
+            {
+                return Enumerable.Empty<CouponsDto>();
+            }
+
+            // Obtener los IDs de los eventos en los que el usuario está registrado o tiene en favoritos
+            var eventoIds = usuario.Asistants.Select(a => a.EventId)
+                .Union(usuario.Favorites.Select(f => f.Id))
+                .Distinct();
+
+            // Obtener los cupones vigentes asociados a los eventos del usuario
+            var cuponesVigentes = await dbContext.Coupons
+                .Include(c => c.Events)
+                .Where(c => eventoIds.Contains(c.EventId) && c.ExpireDate > DateTime.Now)
+                .ToListAsync();
+
+
+            // Proyectar los resultados en una lista de CouponsDto
+            var couponsDto = cuponesVigentes.Select(c => new CouponsDto
+            {
+                Description = c.Description,
+                Coupon = c.Coupon,
+                Date = c.ExpireDate.ToShortDateString(),
+                Hour = c.ExpireDate.ToShortTimeString(),
+                EventId = c.Events.Name
+            });
+
+            return couponsDto;
+        }
         //Este metdo lo deje aqui comentado como demostracion de como es que accedo al id del usuario regisrado con solo su token
         /*
         [HttpGet("whoIam")]
@@ -238,6 +280,6 @@ namespace WebApiEventos.Controllers
 
             return Ok(new {message = $"Su id es: {email} y su id es :{id}"});
         }*/
-       
+
     }
 }
