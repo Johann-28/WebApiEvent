@@ -5,7 +5,7 @@ Esta API tiene las siguientes funciones:
 
 <div style ="text-align :justify">
 
-<details><summary>** Permitir a los usuarios crear eventos, especificando el nombre, la descripción, la fecha y la hora, la ubicación y la capacidad máxima de asistentes. **</summary> 
+** <details><summary> Permitir a los usuarios crear eventos, especificando el nombre, la descripción, la fecha y la hora, la ubicación y la capacidad máxima de asistentes. </summary> **
 <p>
 
 ### Logica de servicio!
