@@ -24,6 +24,7 @@ namespace WebApiEventos.Services
                 .Include(a => a.Organizers)
                 .Select(a => new EventsDto
                 {
+                    Id = a.Id,
                     Name = a.Name,
                     Description = a.Descripcion,
                     Date = a.Date.ToShortDateString(),
@@ -44,6 +45,7 @@ namespace WebApiEventos.Services
                 .Include(a => a.Organizers)
                 .Select(a => new EventsDto
                 {
+                    Id = a.Id,
                     Name = a.Name,
                     Description = a.Descripcion,
                     Date = a.Date.ToShortDateString(),

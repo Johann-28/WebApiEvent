@@ -61,6 +61,7 @@ namespace WebApiEventos.Controllers
             // Mapea los eventos a la lista de DTOs
             List<EventsDto> eventsDtoList = upcomingEvents.Select(e => new EventsDto
             {
+                Id = e.Id,
                 Name = e.Name,
                 Description = e.Descripcion,
                 Date = e.Date.ToShortDateString(),
