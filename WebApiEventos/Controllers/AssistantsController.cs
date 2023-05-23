@@ -1,22 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using WebApiEventos.DTOs;
-using WebApiEventos.Entities;
 using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
-    
+
+    // Controlador para gestionar las operaciones relacionadas con los usuarios.
     [ApiController]
     [Route("api/[controller]")]
     public class AssistantsController : ControllerBase
     {
         private readonly EventsService eventsService;
-        private readonly UsersService usersService;
         private readonly AssistantsService assistantsService;
-        private readonly ApplicationDbContext dbContext;
 
         // Inicializa una nueva instancia de la clase AssistantsController.
         // Parámetros:
@@ -24,12 +20,11 @@ namespace WebApiEventos.Controllers
         //   - usersService: Instancia del servicio UsersService.
         //   - assistantsService: Instancia del servicio AssistantsService.
         //   - dbContext: Contexto de la base de datos de la aplicación.
-        public AssistantsController(EventsService eventsService, UsersService usersService, AssistantsService assistantsService, ApplicationDbContext dbContext)
+        public AssistantsController(EventsService eventsService, AssistantsService assistantsService)
         {
             this.eventsService = eventsService;
-            this.usersService = usersService;
             this.assistantsService = assistantsService;
-            this.dbContext = dbContext;
+ 
         }
 
        
@@ -77,9 +72,9 @@ namespace WebApiEventos.Controllers
                 return BadRequest(new { message = "Event already passed" });
             }
 
-            var assistant = await assistantsService.Create(userId, eventId);
+            await assistantsService.Create(userId, eventId);
 
-            return Accepted(new { message = "Registro actualizado con éxito" });
+            return Accepted(new { message = "Registration successful" });
         }
     }
 }

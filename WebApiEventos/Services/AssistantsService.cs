@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
-using WebApiEventos.Services;
+
 
 namespace WebApiEventos.Services
 {
@@ -39,7 +39,7 @@ namespace WebApiEventos.Services
         //   - eventId: ID del evento al que se registrará el usuario.
         // Retorna:
         //   - El objeto Assistants que representa el nuevo asistente creado.
-        public async Task<Assistants> Create(int userId, int eventId)
+        public async Task Create(int userId, int eventId)
         {
             Assistants assistant = new Assistants
             {
@@ -55,7 +55,7 @@ namespace WebApiEventos.Services
             dbContext.Asistants.Add(assistant);
             await dbContext.SaveChangesAsync();
 
-            return assistant;
+         
         }
 
         // Valida si un usuario puede registrarse como asistente a un evento.
