@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiEventos;
 
@@ -11,9 +12,11 @@ using WebApiEventos;
 namespace WebApiEventos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523063839_AddCoupons")]
+    partial class AddCoupons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,15 +123,10 @@ namespace WebApiEventos.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EventsId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventsId");
 
                     b.ToTable("Coupons");
                 });
@@ -142,6 +140,9 @@ namespace WebApiEventos.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Capacidad")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CouponsId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -164,6 +165,8 @@ namespace WebApiEventos.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CouponsId");
 
                     b.HasIndex("OrganizersId");
 
@@ -257,17 +260,12 @@ namespace WebApiEventos.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApiEventos.Entities.Coupons", b =>
-                {
-                    b.HasOne("WebApiEventos.Entities.Events", "Events")
-                        .WithMany("Coupons")
-                        .HasForeignKey("EventsId");
-
-                    b.Navigation("Events");
-                });
-
             modelBuilder.Entity("WebApiEventos.Entities.Events", b =>
                 {
+                    b.HasOne("WebApiEventos.Entities.Coupons", "Coupons")
+                        .WithMany()
+                        .HasForeignKey("CouponsId");
+
                     b.HasOne("WebApiEventos.Entities.Organizers", "Organizers")
                         .WithMany("Events")
                         .HasForeignKey("OrganizersId")
@@ -277,6 +275,8 @@ namespace WebApiEventos.Migrations
                     b.HasOne("WebApiEventos.Entities.Users", null)
                         .WithMany("Favorites")
                         .HasForeignKey("UsersId");
+
+                    b.Navigation("Coupons");
 
                     b.Navigation("Organizers");
                 });
@@ -291,8 +291,6 @@ namespace WebApiEventos.Migrations
             modelBuilder.Entity("WebApiEventos.Entities.Events", b =>
                 {
                     b.Navigation("Assistants");
-
-                    b.Navigation("Coupons");
                 });
 
             modelBuilder.Entity("WebApiEventos.Entities.Organizers", b =>

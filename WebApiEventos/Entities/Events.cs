@@ -24,5 +24,6 @@ namespace WebApiEventos.Entities
         public int OrganizersId { get; set; }
         [JsonIgnore]
         public Organizers Organizers { get; set; }
+        public ICollection<Coupons> Coupons { get; set; }
     }
 }

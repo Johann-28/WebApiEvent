@@ -16,6 +16,7 @@ namespace WebApiEventos
         public DbSet<Comments> Comments { get; set; }
         public DbSet<Organizers> Organizers { get; set; }
         public DbSet<Accounts> OrganizersAccounts { get; set;}
+        public DbSet<Coupons> Coupons { get; set; }   
 
     }
 }

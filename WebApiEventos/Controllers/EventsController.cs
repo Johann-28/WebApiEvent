@@ -25,7 +25,7 @@ namespace WebApiEventos.Controllers
             this.organizersService = organizersService;
         }
 
-       
+     
         //Regresa todos los registros de la tabla eventos
         [HttpGet("events")]
         public async Task<IEnumerable<EventsDto>> GetAll()
@@ -35,6 +35,7 @@ namespace WebApiEventos.Controllers
             return await eventsService.Get();
         }
 
+ 
         // Obtiene una lista de eventos en formato DTO (Data Transfer Object).
         // Permite mostrar una lista de todos los eventos creados, proporcionando información básica como el nombre, fecha y ubicación.
         // Esto permite a los usuarios explorar los eventos y decidir a cuál desean asistir.
@@ -137,37 +138,6 @@ namespace WebApiEventos.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
         }
-        [HttpPost("sendEmail")]
-        public IActionResult SendEmail(string to, string subject, string body)
-        {
-
-            // Configuración del cliente SMTP
-            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.Credentials = new NetworkCredential("johannProyectos@gmail.com", "johannproyectoscontrasena");
-            smtpClient.EnableSsl = true;
-             
-            // Creación del correo electrónico
-            MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("johannProyectos@gmail.com");
-            mail.To.Add(to);
-            mail.Subject = subject;
-            mail.Body = body;
-
-            // Envío del correo electrónico
-            try
-            {
-                smtpClient.Send(mail);
-                Console.WriteLine("Correo electrónico enviado exitosamente.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error al enviar el correo electrónico: " + ex.Message);
-            }
-
-            return Ok();
-        }
-
-
+     
     }
 }
