@@ -16,14 +16,15 @@ namespace WebApiEventos.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly LoginService loginService;
+        private readonly OrganizersService organizersService;
         private IConfiguration config;
-        public LoginController(ApplicationDbContext dbContext, LoginService loginService, IConfiguration config)
+        public LoginController(ApplicationDbContext dbContext, LoginService loginService, IConfiguration config, OrganizersService organizersService)
         {
 
             this.dbContext = dbContext;
             this.loginService = loginService;
             this.config = config;
-
+            this.organizersService = organizersService;
         }
 
         [HttpPost("login/user")]
@@ -103,6 +104,20 @@ namespace WebApiEventos.Controllers
 
             return Ok(new { token = jwtToken });
         }
+        [HttpPost("register/organizer")]
+        public async Task<IActionResult> Register(Accounts accountToRegister)
+        {
+            bool actuallyRegistered = await dbContext.OrganizersAccounts.AnyAsync(x => x.Email == accountToRegister.Email);
+
+            if (actuallyRegistered)
+            {
+                return BadRequest(new { message = "Email already registered" });
+            }
+            await organizersService.Register(accountToRegister);
+            return Ok();
+
+        }
+
 
 
         private string GenerateOrganizerToken(Accounts organizer)

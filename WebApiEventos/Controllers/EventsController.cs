@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
 using WebApiEventos.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApiEventos.Controllers
 {
@@ -22,8 +23,8 @@ namespace WebApiEventos.Controllers
             this.organizersService = organizersService;
         }
 
-        //Regresa todos los registros de la tabla eventos,
-        //NECESITARAS AUTORIZACION
+       
+        //Regresa todos los registros de la tabla eventos
         [HttpGet("events")]
         public async Task<IEnumerable<EventsDto>> GetAll()
         {
@@ -75,7 +76,7 @@ namespace WebApiEventos.Controllers
         
         }
 
-
+        [Authorize(Policy = "OrganizerPolicy")]
         // Crea un nuevo evento.
         // Permite a los usuarios crear un evento especificando el nombre, descripción, fecha, hora, ubicación y capacidad máxima de asistentes.
         // Parámetros:
@@ -97,21 +98,36 @@ namespace WebApiEventos.Controllers
             return Ok();
         }
 
-        //Permitir al organizador del evento editar los detalles del evento en cualquier momento.
-        //FALTA AÑADIR AUTORIZACION 
+        [Authorize(Policy = "OrganizerPolicy")]
+        //Permitir al organizador del evento editar los detalles del evento en cualquier momento. 
         [HttpPut("udpate/{id}")]
-        public async Task<ActionResult> Update(int id, Events evento)
+        public async Task<ActionResult> Update(Events evento, int id)
         {
-            if (evento.Id != id)
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+            if (userId != evento.OrganizersId)
             {
-                return BadRequest(new { message = $"El ID({id}) de la URL no coincide con el ID({evento.Id}) del cuerpo de la solicitud." });
+
+
+            }
+            if(evento.Id != id)
+            {
+                return BadRequest(new { message = $"Id de la url ({id}) no coincide con el del objeto({evento.Id})" });
             }
 
-            var eventToUpdate = await eventsService.GetById(id);
+
+            if(userId != evento.OrganizersId)
+            {
+                return BadRequest(new { message = "You are not the organizer of this event" });
+            }
+
+
+            var eventToUpdate = await eventsService.GetById(evento.Id);
 
             if (eventToUpdate is not null)
             {
-                await eventsService.Update(id, evento);
+                await eventsService.Update(evento.Id, evento);
                 return Accepted(new { message = $"Registro actualizado con exito" });
             }
 
@@ -120,23 +136,7 @@ namespace WebApiEventos.Controllers
             return Ok();
         }
 
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-                
-            var eventToDelete = await eventsService.GetById(id);
-
-            if (eventToDelete is not null)
-            {
-                await eventsService.Delete(id);
-                return Accepted(new { message = $"Registro borrado con exito" });
-            }
-            else
-            {
-                return BadRequest("No existe el evento");
-            }
-
-        }
+       
 
 
     }

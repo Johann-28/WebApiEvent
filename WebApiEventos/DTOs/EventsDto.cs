@@ -6,7 +6,8 @@
 
         public string Description { get; set; }
 
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
+        public string Hour { get; set; }
 
         public string Ubication { get; set; }
 

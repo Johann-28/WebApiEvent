@@ -39,32 +39,7 @@ namespace WebApiEventos.Controllers
 
         }*/
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(Accounts accountToRegister)
-        {
-            bool actuallyRegistered = await dbContext.OrganizersAccounts.AnyAsync(x => x.Email == accountToRegister.Email);
-
-            if (actuallyRegistered)
-            {
-                return BadRequest(new { message = "Email already registered" });
-            }
-            await service.Register(accountToRegister);
-            return Ok();
-
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(AccountDto organizerDto)
-        {
-            var organizer = await loginService.GetOrganizator(organizerDto);
-
-            if (organizer is null)
-            {
-                return BadRequest(new { message = "Invalid Credentials" });
-            }
-            //generar token
-            return Ok(new { token = "some value" });
-        }
+      
 
     }
 }

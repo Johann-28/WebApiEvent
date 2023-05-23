@@ -26,7 +26,8 @@ namespace WebApiEventos.Services
                 {
                     Name = a.Name,
                     Description = a.Descripcion,
-                    Date = a.Date,
+                    Date = a.Date.ToShortDateString(),
+                    Hour = a.Date.ToShortTimeString(),
                     Ubication = a.Ubicacion,
                     Organizer = a.Organizers.Name,
                     Capacity = a.Capacidad 
@@ -45,7 +46,8 @@ namespace WebApiEventos.Services
                 {
                     Name = a.Name,
                     Description = a.Descripcion,
-                    Date = a.Date,
+                    Date = a.Date.ToShortDateString(),
+                    Hour = a.Date.ToShortTimeString(),
                     Ubication = a.Ubicacion,
                     Organizer = a.Organizers.Name,
                     Capacity = a.Capacidad
@@ -101,20 +103,6 @@ namespace WebApiEventos.Services
                 await dbContext.SaveChangesAsync();
             }
         }
-
-        // Elimina un evento por su ID.
-        // Parámetros:
-        // - id: El ID del evento a eliminar.
-        public async Task Delete(int id)
-        {
-            var eventToDelete = await GetById(id);
-
-            if(eventToDelete is not null)
-            {
-                dbContext.Events.Remove(eventToDelete);
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
+      
     }
 }
