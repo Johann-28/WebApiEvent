@@ -20,10 +20,12 @@ namespace WebApiEventos.Entities
 
         [JsonIgnore]
         public ICollection<Assistants> Assistants { get; set; }
-     
+
+        [JsonIgnore]
         public int OrganizersId { get; set; }
         [JsonIgnore]
         public Organizers Organizers { get; set; }
+        [JsonIgnore]
         public ICollection<Coupons> Coupons { get; set; }
     }
 }

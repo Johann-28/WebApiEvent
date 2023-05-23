@@ -89,12 +89,16 @@ namespace WebApiEventos.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(Events evento)
         {
+
+            //Consiguiendo id del usuario
+            int organizerId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
             // Añade un evento a la base de datos
 
             var organizer = await organizersService.GetById(evento.OrganizersId);
 
             if (organizer is null)
-                return BadRequest(new { message = $"El organizador {evento.OrganizersId} no existe" });
+                return BadRequest(new { message = $"El organizador {organizerId} no existe" });
 
             await eventsService.Create(evento);
 

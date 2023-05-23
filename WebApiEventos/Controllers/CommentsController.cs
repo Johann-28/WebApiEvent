@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 using WebApiEventos.DTOs;
@@ -30,19 +31,23 @@ namespace WebApiEventos.Controllers
             return await service.Get();
         }
 
-      
 
+        [Authorize(Policy = "UserPolicy")]
         // Permite a los usuarios enviar preguntas o comentarios al organizador del evento.
         [HttpPost("post")]
         public async Task<IActionResult> Post(Comments comentario)
         {
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
             // Verifica si el tipo de comentario es válido (1: Pregunta, 2: Comentario).
             if (comentario.Type != 1 && comentario.Type != 2)
             {
                 return BadRequest(new { message = "Enter 1 for a question or 2 for a comment" });
             }
 
-            var user = await dbContext.Users.FindAsync(comentario.UserId);
+            var user = await dbContext.Users.FindAsync(userId);
             if(user is null)
             {
                 return BadRequest(new { message = "User doesnt exists" });
