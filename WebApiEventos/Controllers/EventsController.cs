@@ -60,18 +60,28 @@ namespace WebApiEventos.Controllers
         // - Respuesta HTTP indicando si se creó el evento exitosamente.
         [Authorize(Policy = "OrganizerPolicy")]
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Events evento)
+        public async Task<IActionResult> Create(EventDtoIn eventToRegister)
         {
+            Events evento = new Events();
+
+            evento.Name = eventToRegister.Name;
+            evento.Descripcion = eventToRegister.Description;
+            evento.Date = eventToRegister.Date;
+            evento.Ubicacion = eventToRegister.Ubication;
+            evento.Capacidad = eventToRegister.Capacity;
+
+            if (evento.Date < DateTime.Now)
+                return BadRequest(new { message = "The date expired"});
+
+            if(evento.Capacidad < 1 )
+            {
+                return BadRequest(new { message = "The capacity must be over 0" });
+            }
 
             //Consiguiendo id del usuario
             int organizerId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
 
-            // Añade un evento a la base de datos
-            var organizer = await organizersService.GetById(evento.OrganizersId);
-
-            if (organizer is null)
-                return BadRequest(new { message = $"Organizer {organizerId} doesnt exists" });
-
+            evento.OrganizersId = organizerId;
             await eventsService.Create(evento);
 
             return Ok(new { message = "Event succesfully created"});
