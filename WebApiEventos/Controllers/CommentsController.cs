@@ -1,39 +1,47 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
+
+    // Controlador para gestionar las operaciones relacionadas con los usuarios.
     [ApiController]
     [Route("api/[controller]")]
     public class CommentsController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
-        private readonly CommentsService service;
-        private readonly UsersService usersService;
+     
+        private readonly CommentsService commentsService;
         private readonly OrganizersService organizationizersService;
-        public CommentsController(ApplicationDbContext dbContext, CommentsService service, UsersService usersService, OrganizersService organizationizersService)
+        private readonly UsersService usersService;
+        public CommentsController(CommentsService commentsService,  OrganizersService organizationizersService, UsersService usersService)
         {
-            this.dbContext = dbContext;
-            this.service = service;
-            this.usersService = usersService;
+       
+            this.commentsService = commentsService;
             this.organizationizersService = organizationizersService;
+            this.usersService = usersService;
         }
 
+        // Obtiene todos los comentarios en formato DTO.
+        // Retorna:
+        //   - Una colección de objetos CommentsDto que representan los comentarios en formato DTO.
         [HttpGet("get")]
         public async Task<IEnumerable<CommentsDto>> Get()
         {
 
-            return await service.Get();
+            return await commentsService.Get();
         }
 
 
-        [Authorize(Policy = "UserPolicy")]
         // Permite a los usuarios enviar preguntas o comentarios al organizador del evento.
+        // Requiere autenticación del usuario.
+        // Parámetros:
+        //   - comentario: Objeto Comment que representa el comentario a enviar.
+        // Retorna:
+        //   - Un IActionResult que indica el resultado de la operación.
+        [Authorize(Policy = "UserPolicy")]
         [HttpPost("post")]
         public async Task<IActionResult> Post(Comments comentario)
         {
@@ -47,7 +55,7 @@ namespace WebApiEventos.Controllers
                 return BadRequest(new { message = "Enter 1 for a question or 2 for a comment" });
             }
 
-            var user = await dbContext.Users.FindAsync(userId);
+            var user = await usersService.GetById(userId);
             if(user is null)
             {
                 return BadRequest(new { message = "User doesnt exists" });
@@ -63,8 +71,7 @@ namespace WebApiEventos.Controllers
             comentario.User = user;
 
             // Agrega el comentario a la base de datos.
-            dbContext.Comments.Add(comentario);
-            await dbContext.SaveChangesAsync();
+            await commentsService.PostService(comentario, userId);
 
             // Retorna una respuesta exitosa junto con un mensaje.
             return Ok(new { message = "Post created successfully" });

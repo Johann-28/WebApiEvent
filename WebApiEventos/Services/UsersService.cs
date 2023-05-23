@@ -104,6 +104,7 @@ namespace WebApiEventos.Services
                     }).ToList(),
                     Comments = u.Comments.Select(c => new Comments
                     {
+                        OrgnaizerId = c.OrgnaizerId,
                         Id = c.Id,
                         Comment = c.Comment,
                         Type = c.Type

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
+using WebApiEventos.Entities;
 
 namespace WebApiEventos.Services
 {
@@ -33,6 +34,25 @@ namespace WebApiEventos.Services
                 }).ToListAsync();
         }
 
+        // Agrega un comentario a la base de datos.
+        // Parámetros:
+        //   - comentario: Objeto Comment que representa el comentario a agregar.
+        //   - userId: ID del usuario que realiza el comentario.
+        public async Task PostService(Comments comentario, int userId)
+        {
+
+            // Agrega el comentario a la base de datos.
+            dbContext.Comments.Add(comentario);
+            await dbContext.SaveChangesAsync();
+
+        }
+
+
+        // Obtiene todos los comentarios que ha recibido un organizador en formato DTO.
+        // Parámetros:
+        //   - OrganizerId: ID del organizador cuyos comentarios se desean obtener.
+        // Retorna:
+        //   - Una colección de objetos CommentsDto que representan los comentarios del organizador en formato DTO.
         public async Task<IEnumerable<CommentsDto>> GetOrganizerComments(int OrganizerId)
         {
             return await dbContext.Comments
