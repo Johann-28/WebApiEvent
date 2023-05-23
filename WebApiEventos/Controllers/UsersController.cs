@@ -78,13 +78,49 @@ namespace WebApiEventos.Controllers
                 .ToListAsync();
         }
 
-        /*[HttpGet("upcomingEvents")]
-        public async */
+        [HttpGet("upcomingEvents")]
+        public async Task<ActionResult<List<EventsDto>>> UpComing()
+        {
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
+            // Obtiene la fecha actual
+            DateTime currentDate = DateTime.Now;
+
+            // Calcula la fecha límite para los eventos próximos (7 días a partir de la fecha actual)
+            DateTime deadlineDate = currentDate.AddDays(7);
+
+            // Obtiene los eventos a los que el usuario asistirá y que están dentro del rango de fechas
+            var upcomingEvents = await dbContext.Users
+                .Include(u => u.Asistants)
+                .ThenInclude(a => a.Event)
+                .ThenInclude(o => o.Organizers)
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.Asistants.Where(a => a.Event.Date >= currentDate && a.Event.Date <= deadlineDate).Select(a => a.Event))
+                .ToListAsync();
+
+            // Mapea los eventos a la lista de DTOs
+            List<EventsDto> eventsDtoList = upcomingEvents.Select(e => new EventsDto
+            {
+                Name = e.Name,
+                Description = e.Descripcion,
+                Date = e.Date.ToShortDateString(),
+                Hour = e.Date.ToShortTimeString(),
+                Ubication = e.Ubicacion,
+                Organizer = e.Organizers.Name,
+                Capacity = e.Capacidad
+            }).ToList();
+
+            return eventsDtoList;
+        }
+
+
 
         // Obtiene todos los usuarios.
         // Retorna:
         //   - Una lista de objetos Users que representan todos los usuarios registrados.
-       
+
         [HttpGet("get")]
         public async Task<ActionResult<List<Users>>> GetAll()
         {
