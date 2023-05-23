@@ -37,7 +37,7 @@ namespace WebApiEventos.Services
         //   - user: Objeto Users que representa el nuevo usuario a registrar.
         public async Task Register(Users user)
         {
-            dbContext.Users.Add(user);
+            await dbContext.Users.AddAsync(user);
             await dbContext.SaveChangesAsync();
 
         }
@@ -191,7 +191,7 @@ namespace WebApiEventos.Services
                 Coupon = c.Coupon,
                 Date = c.ExpireDate.ToShortDateString(),
                 Hour = c.ExpireDate.ToShortTimeString(),
-                EventId = c.Events.Name
+                EventName = c.Events.Name
             });
 
             return couponsDto;

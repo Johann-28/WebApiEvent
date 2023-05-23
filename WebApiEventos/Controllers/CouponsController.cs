@@ -1,38 +1,41 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
+    // Controlador para gestionar las operaciones relacionadas con los cupones.
     [ApiController]
     [Route("api/[controller]")]
     public class CouponsController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
+   
         private readonly EventsService eventsService;
+        private readonly CouponsService couponsService;
 
-        public CouponsController(ApplicationDbContext dbContext, EventsService eventsService)
+        public CouponsController(EventsService eventsService, CouponsService couponsService)
         {
-            this.dbContext = dbContext;
             this.eventsService = eventsService;
+            this.couponsService = couponsService;
         }
-       //[Authorize(Policy = "OrganizerPolicy")]
+
+        // Obtiene todos los cupones.
+        // Retorna:
+        //   - Una colección de objetos CouponsDto que representan todos los cupones, incluyendo información adicional de eventos relacionados.
+        [Authorize(Policy = "OrganizerPolicy")]
         [HttpGet("get")]
         public async Task<IEnumerable<CouponsDto>> Get()
         {
-            return await dbContext.Coupons.Include(e => e.Events).Select(a => new CouponsDto
-            {
-                Description = a.Description,
-                Coupon = a.Coupon,
-                Date = a.ExpireDate.ToShortDateString(),
-                Hour = a.ExpireDate.ToShortTimeString(),
-                EventId = a.Events.Name
-            }).ToListAsync();
+            return await couponsService.GetService();
         }
 
+        // Crea un nuevo cupón.
+        // Parámetros:
+        //   - couponToAdd: Objeto CouponsDtoIn que contiene los detalles del cupón a crear.
+        // Retorna:
+        //   - Respuesta HTTP indicando si se creó el cupón exitosamente.
         [Authorize(Policy = "OrganizerPolicy")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(CouponsDtoIn couponToAdd)
@@ -59,8 +62,7 @@ namespace WebApiEventos.Controllers
 
             coupon.Events = evento;
 
-            await dbContext.Coupons.AddAsync(coupon);
-            await dbContext.SaveChangesAsync();
+            await couponsService.CreateService(coupon);
 
             return Ok("Coupon created succesfully");
         }

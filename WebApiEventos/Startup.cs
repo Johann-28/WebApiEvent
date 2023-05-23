@@ -51,6 +51,7 @@ namespace WebApiEventos
             services.AddScoped<AssistantsService>();
             services.AddScoped<OrganizersService>();
             services.AddScoped<LoginService>();
+            services.AddScoped<CouponsService>();
 
             services.AddEndpointsApiExplorer();
 

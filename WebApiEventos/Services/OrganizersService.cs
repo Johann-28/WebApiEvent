@@ -29,7 +29,7 @@ namespace WebApiEventos.Services
         //   - Una tarea que representa la operación asincrónica de creación del organizador.
         public async Task Create(Organizers organizer)
         {
-            dbContext.Organizers.Add(organizer);
+            await dbContext.Organizers.AddAsync(organizer);
             await dbContext.SaveChangesAsync();
             
         }
@@ -56,7 +56,7 @@ namespace WebApiEventos.Services
 
             await Create(newAccount);
 
-            dbContext.OrganizersAccounts.Add(organizer);
+            await dbContext.OrganizersAccounts.AddAsync(organizer);
             await dbContext.SaveChangesAsync();
            
 
