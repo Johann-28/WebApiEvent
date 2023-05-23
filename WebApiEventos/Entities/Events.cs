@@ -9,13 +9,14 @@ namespace WebApiEventos.Entities
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-
+        [Required]
+        [MaxLength(140)]
         public string Descripcion { get; set; }
-
+        [Required]
         public DateTime Date { get; set; }
-
+        [Required]
         public string Ubicacion { get; set; }
-
+        [Required]
         public int Capacidad { get; set; }
 
         [JsonIgnore]

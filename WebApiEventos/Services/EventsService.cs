@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApiEventos.DTOs;
 using WebApiEventos.Entities;
 
@@ -16,7 +17,7 @@ namespace WebApiEventos.Services
         // Obtiene una lista de eventos en formato DTO.
         // Retorna:
         // - Una colección de objetos EventsDto que representan los eventos en formato DTO.
-        //La regresa ordenada de mayor a menor
+        //Los eventos se devuelven ordenados de mayor a menor
 
         public async Task<IEnumerable<EventsDto>> GetTop()
         {
@@ -39,8 +40,12 @@ namespace WebApiEventos.Services
 
             return events;
         }
+
+        // Obtiene una lista de todos los eventos en formato DTO.
+        // Retorna una colección de objetos EventsDto que representan todos los eventos en formato DTO.
         public async Task<IEnumerable<EventsDto>> Get()
         {
+            //la funcion Include hace un Join en base al identificador propio y la tabla Asistants
             var events = await dbContext.Events
                 .Include(a => a.Organizers)
                 .Select(a => new EventsDto
@@ -106,6 +111,40 @@ namespace WebApiEventos.Services
             }
         }
 
-      
+        // Busca eventos que coincidan con los criterios de búsqueda especificados.
+        // Parámetros:
+        //   searchBy: Objeto que contiene los criterios de búsqueda.
+        // Retorna:
+        //   Una colección de objetos Events que representan los eventos que coinciden con los criterios de búsqueda.
+        public async Task<IEnumerable<Events>> SearchEvent(EventSearchDtoIn searchBy)
+        {
+            var events = dbContext.Events.AsQueryable();
+
+            // Filtrar por nombre del evento
+            if (!string.IsNullOrEmpty(searchBy.EventName))
+            {
+
+                events = events.Where(e => e.Name.Contains(searchBy.EventName));
+            }
+
+            //Filtrar por ubicación del evento
+            if (!string.IsNullOrEmpty(searchBy.Ubication))
+            {
+
+                events = events.Where(e => e.Ubicacion.Contains(searchBy.Ubication));
+            }
+
+            // Filtrar por fecha del evento
+            if (searchBy.Date != null)
+            {
+
+                events = events.Where(e => e.Date.Date == searchBy.Date.Value.Date);
+            }
+
+            var result = await events.ToListAsync();
+            return result;
+
+        }
+
     }
 }
