@@ -34,50 +34,7 @@ namespace WebApiEventos.Controllers
             this.loginService = loginService;
             this.config = config;
         }
-
-        [HttpGet("getdto")]
-        public async Task<ActionResult<List<UsersDto>>> GetDto()
-        {
-            return await dbContext.Users
-                .Include(a => a.Asistants)
-                .Include(c => c.Comments)
-                .Include(f => f.Favorites)
-                .Include(o => o.Organizations)
-                .Select(u => new UsersDto
-                {
-                    Name = u.Name,
-                    Email = u.Email,
-                    Assistants = u.Asistants.Select(a => new UsersEventsDto
-                    {
-
-                        EventName = a.Event.Name,
-                        Date = a.Event.Date.ToShortDateString(),
-                        Ubication = a.Event.Ubicacion,
-                        Hour = a.Event.Date.ToShortTimeString()
-
-                    }).ToList(),
-                    Comments = u.Comments.Select(c => new UsersCommentsDto
-                    {
-
-                        Comment = c.Comment,
-                        Type = c.Type == 1 ? "Pregunta" : "Comentario",
-                        OrganizerName = c.Organizers.Name
-
-                    }).ToList(),
-                    Favorites = u.Favorites.Select(f => new UsersEventsDto
-                    {
-                        EventName = f.Name,
-                        Date = f.Date.ToShortDateString(),
-                        Ubication = f.Ubicacion,
-                        Hour = f.Date.ToShortTimeString()
-                    }).ToList(),
-                    Organizers = u.Organizations.Select(o => new UsersOrganizersFollowed
-                    {
-                        OrganizerName = o.Name
-                    }).ToList()
-                })
-                .ToListAsync();
-        }
+      
 
         [HttpGet("upcomingEvents")]
         public async Task<ActionResult<List<EventsDto>>> UpComing()

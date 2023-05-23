@@ -32,5 +32,20 @@ namespace WebApiEventos.Services
                     Organizer = c.Organizers.Name
                 }).ToListAsync();
         }
+
+        public async Task<IEnumerable<CommentsDto>> GetOrganizerComments(int OrganizerId)
+        {
+            return await dbContext.Comments
+                .Where(c => c.OrgnaizerId == OrganizerId)
+                .Select(c => new CommentsDto
+                {
+                    Name = c.User.Name,
+                    Type = c.Type == 1 ? "Pregunta" : "Comentario",
+                    Comment = c.Comment,
+                    Organizer = c.Organizers.Name
+                })
+                .ToListAsync();
+        }
+
     }
 }

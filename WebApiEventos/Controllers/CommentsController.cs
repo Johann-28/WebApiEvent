@@ -30,11 +30,7 @@ namespace WebApiEventos.Controllers
             return await service.Get();
         }
 
-        [HttpGet("getall")]
-        public async Task<List<Comments>> GetAll()
-        {
-            return await dbContext.Comments.Include(a=> a.User).Include(a=> a.Organizers).ToListAsync();
-        }
+      
 
         // Permite a los usuarios enviar preguntas o comentarios al organizador del evento.
         [HttpPost("post")]
@@ -58,6 +54,8 @@ namespace WebApiEventos.Controllers
                 return BadRequest(new { message = $"Organizer {comentario.OrgnaizerId} doesnt exists" });
             }
 
+            comentario.Organizers = organizer;
+            comentario.User = user;
 
             // Agrega el comentario a la base de datos.
             dbContext.Comments.Add(comentario);

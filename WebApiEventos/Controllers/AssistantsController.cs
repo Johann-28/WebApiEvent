@@ -32,21 +32,12 @@ namespace WebApiEventos.Controllers
             this.dbContext = dbContext;
         }
 
-        // Obtiene todos los asistentes registrados.
-        // Retorna:
-        //   - Una lista de objetos Assistants que representan a los asistentes registrados.
-        [HttpGet("get")]
-        public async Task<ActionResult<List<Assistants>>> Get()
-        {
-            return await dbContext.Asistants.Include(a => a.Event)
-                .Include(a => a.User)
-                .ToListAsync();
-        }
+       
 
         // Obtiene una lista de asistentes en formato DTO.
         // Retorna:
         //   - Una colección de objetos AssistantsDto que representan a los asistentes en formato DTO.
-        [HttpGet("getdto")]
+        [HttpGet("get")]
         public async Task<IEnumerable<AssistantsDto>> GetDto()
         {
             return await assistantsService.Get();

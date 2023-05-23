@@ -14,13 +14,14 @@ namespace WebApiEventos.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly OrganizersService service;
-        private readonly LoginService loginService;
+        private readonly CommentsService commentsService;
 
-        public OrganizersController(ApplicationDbContext dbContext, OrganizersService service, LoginService loginService)
+        public OrganizersController(ApplicationDbContext dbContext, OrganizersService service, CommentsService commentsService)
         {
             this.dbContext = dbContext;
             this.service = service;
-            this.loginService = loginService;
+            this.commentsService = commentsService;
+          
         }
 
         [HttpGet("get")]
@@ -29,17 +30,15 @@ namespace WebApiEventos.Controllers
             return await service.Get();
         }
 
-        //Este metodo es el registro pero feo
-        /* 
-        [HttpPost("post")]
-        public async Task<IActionResult> Create(Organizers organizer)
+        [HttpGet("getComments")]
+        public async Task<IEnumerable<CommentsDto>> GetComments()
         {
-            await service.Create(organizer);
-            return Ok();
+            //Consiguiendo id del usuario
+            int organizerId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+            return await commentsService.GetOrganizerComments(organizerId);
+        }
 
-        }*/
 
-      
 
     }
 }
