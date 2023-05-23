@@ -4,6 +4,8 @@ using WebApiEventos.Entities;
 using WebApiEventos.Services;
 using WebApiEventos.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Mail;
+using System.Net;
 
 namespace WebApiEventos.Controllers
 {
@@ -135,8 +137,36 @@ namespace WebApiEventos.Controllers
             await dbContext.SaveChangesAsync();
             return Ok();
         }
+        [HttpPost("sendEmail")]
+        public IActionResult SendEmail(string to, string subject, string body)
+        {
 
-       
+            // Configuración del cliente SMTP
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential("johannProyectos@gmail.com", "johannproyectoscontrasena");
+            smtpClient.EnableSsl = true;
+             
+            // Creación del correo electrónico
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress("johannProyectos@gmail.com");
+            mail.To.Add(to);
+            mail.Subject = subject;
+            mail.Body = body;
+
+            // Envío del correo electrónico
+            try
+            {
+                smtpClient.Send(mail);
+                Console.WriteLine("Correo electrónico enviado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al enviar el correo electrónico: " + ex.Message);
+            }
+
+            return Ok();
+        }
 
 
     }

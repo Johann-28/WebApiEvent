@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using WebApiEventos.DTOs;
 using WebApiEventos.DTOs.UserDto;
 using WebApiEventos.Entities;
@@ -82,11 +78,13 @@ namespace WebApiEventos.Controllers
                 .ToListAsync();
         }
 
+        /*[HttpGet("upcomingEvents")]
+        public async */
 
         // Obtiene todos los usuarios.
         // Retorna:
         //   - Una lista de objetos Users que representan todos los usuarios registrados.
-        [Authorize(Policy ="User")]
+       
         [HttpGet("get")]
         public async Task<ActionResult<List<Users>>> GetAll()
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using WebApiEventos.DTOs;
@@ -7,6 +8,7 @@ using WebApiEventos.Services;
 
 namespace WebApiEventos.Controllers
 {
+    
     [ApiController]
     [Route("api/[controller]")]
     public class AssistantsController : ControllerBase
@@ -59,13 +61,29 @@ namespace WebApiEventos.Controllers
         //   - eventId: ID del evento al que se desea registrar el usuario.
         // Retorna:
         //   - Un objeto IActionResult que indica el resultado de la operación.
+        [Authorize(Policy = "UserPolicy")]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromQuery, Required()] int userId, [FromQuery, Required()] int eventId)
+        public async Task<IActionResult> Register(int eventId)
         {
+
+
+            //Consiguiendo id del usuario
+            int userId = int.Parse((HttpContext.User.FindFirst("UserId")).Value);
+
+
             string result = await assistantsService.Validate(userId, eventId);
+
             if (result != "Valid")
             {
                 return BadRequest(result);
+            }
+
+            var evento = await eventsService.GetById(eventId);
+
+            //Añadiendo verificacion de fecha
+            if(evento.Date < DateTime.Now)
+            {
+                return BadRequest(new { message = "Event already passed" });
             }
 
             var assistant = await assistantsService.Create(userId, eventId);
