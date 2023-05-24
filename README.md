@@ -7,7 +7,10 @@
 </p>
 
 #
+A continuacion se muestra un diagrama entidad relacion de la base de datos de la API:
+<br>
 
+![Diagrama-DER](https://github.com/Johann-28/WebApiEvent/tree/master/VisualMaterial/Diagrama-DER.png)
 
 <div style ="text-align :justify">
 
