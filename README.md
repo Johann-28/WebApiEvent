@@ -12,6 +12,9 @@ A continuacion se muestra un diagrama entidad relacion de la base de datos de la
 
 ![Diagrama-DER](https://github.com/Johann-28/WebApiEvent/tree/master/VisualMaterial/Diagrama-DER.png)
 
+A modo de manual de usuario y demostracion de la API se ha creado el siguiente documento:
+![Pdf](https://github.com/Johann-28/WebApiEvent/blob/master/VisualMaterial/PIA.pdf)
+
 <div style ="text-align :justify">
 
  <details><summary> <b>Permitir a los organizadores crear eventos, especificando el nombre, la descripción, la fecha y la hora, la ubicación y la capacidad máxima de asistentes. </b> </summary> 
