@@ -14,12 +14,10 @@ namespace WebApiEventos.Controllers
 
        
         private readonly EventsService eventsService;
-        private readonly OrganizersService organizersService;
-        public EventsController(EventsService eventsService, OrganizersService organizersService)
+        public EventsController(EventsService eventsService)
         {
 
             this.eventsService = eventsService;
-            this.organizersService = organizersService;
         }
 
      
@@ -112,7 +110,7 @@ namespace WebApiEventos.Controllers
 
             if (eventToUpdate is not null)
             {
-                await eventsService.Update(evento.Id, evento);
+                await eventsService.UpdateService(evento.Id, evento);
                 return Ok(new { message = $"Event succesfully updated" });
             }
 

@@ -12,14 +12,6 @@ namespace WebApiEventos.Services
         private EventsService eventsService;
         private UsersService usersService;
 
-        public async Task<IEnumerable<AssistantsDto>> Get()
-        {
-            return await dbContext.Asistants.Select(c => new AssistantsDto
-            {
-                Name = c.User.Name,     
-                Event = c.Event.Name
-            }).ToListAsync();
-        }
 
         // Inicializa una nueva instancia de la clase AssistantsService.
         // Parámetros:
@@ -31,6 +23,14 @@ namespace WebApiEventos.Services
             this.dbContext = dbContext;
             this.eventsService = eventsService;
             this.usersService = usersService;
+        }
+        public async Task<IEnumerable<AssistantsDto>> Get()
+        {
+            return await dbContext.Asistants.Select(c => new AssistantsDto
+            {
+                Name = c.User.Name,     
+                Event = c.Event.Name
+            }).ToListAsync();
         }
 
         // Crea un nuevo asistente para un evento.

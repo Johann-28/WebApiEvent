@@ -96,7 +96,7 @@ namespace WebApiEventos.Services
         // Parámetros:
         // - id: El ID del evento a actualizar.
         // - eventToUpdate: Objeto que contiene los nuevos detalles del evento.
-        public async Task Update(int id, Events eventToUpdate)
+        public async Task UpdateService(int id, Events eventToUpdate)
         {
             var existingEvent = await GetById(id);
             if(existingEvent is not null)
