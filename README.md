@@ -14,7 +14,7 @@ A continuacion se muestra un diagrama entidad relacion de la base de datos de la
 
 
 A modo de manual de usuario y demostracion de la API se ha creado el siguiente documento:
-![Pdf](https://github.com/Johann-28/WebApiEvent/blob/master/VisualMaterial/PIA.pdf)
+[Pdf](https://github.com/Johann-28/WebApiEvent/blob/master/VisualMaterial/PIA.pdf)
 
 <div style ="text-align :justify">
 
