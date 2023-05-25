@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using WebApiEventos.DTOs;
 
 namespace WebApiEventos.Entities
@@ -19,6 +20,8 @@ namespace WebApiEventos.Entities
 
         [Required(ErrorMessage = "Password field required")]
         [MaxLength(20, ErrorMessage = "The maximum length of the Password field is 20 characters.")]
+
+        [JsonIgnore]
 
         public string Password { get; set; }
 
